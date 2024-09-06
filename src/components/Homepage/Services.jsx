@@ -6,7 +6,7 @@ import { raichs } from '@/lib/raich';
 const Services = () => {
 
     const getServices = async () => {
-        const services = await fetch("http://localhost:3000/services/api/all-get");
+        const services = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/services/api/all-get`);
         const res = services.json();
         return res;
     };

@@ -1,40 +1,50 @@
 "use client";
+
 import Image from 'next/image';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import SocialSign from '@/components/shared/SocialSign';
+
 
 const Page = () => {
     const router = useRouter();
     const session = useSession();
-    const searchParams = useSearchParams();
-    const path = searchParams.get('redirect');
+    // const searchParams = useSearchParams();
+    // const path = searchParams.get('redirect');
 
     const handleLogin = async (event) => {
         event.preventDefault();
-
         const email = event.target.email.value;
         const password = event.target.password.value;
+
         const resp = await signIn("credentials", {
             email,
             password,
-            redirect: true,
-            callbackUrl: path ? path : '/'
+            redirect: false, // Use redirect: false to handle manually
         });
-        if (resp.status === 200) {
+
+        if (resp?.ok) {
             router.push('/');
+        } else {
+            console.error("Login failed");
         }
     };
 
     return (
+
         <div className='bg-white min-h-screen flex items-center justify-center'>
             <div className='container px-4 md:px-12 lg:px-24 mx-auto py-12'>
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center'>
                     {/* Left image */}
                     <div className='hidden lg:block'>
-                        <Image src='/assets/images/login/login.svg' height={540} width={540} alt='login' />
+                        <Image
+                            src='/assets/images/login/login.svg'
+                            height={540}
+                            width={540}
+                            alt='login'
+                        />
                     </div>
 
                     {/* Login form */}
@@ -76,6 +86,7 @@ const Page = () => {
                                 </Link>
                             </h6>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -84,3 +95,4 @@ const Page = () => {
 };
 
 export default Page;
+

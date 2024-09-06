@@ -1,4 +1,5 @@
 import { connectDb } from "@/lib/connectDb";
+import { NextResponse } from "next/server";
 
 
 export const GET = async (request, { params }) => {
@@ -7,13 +8,12 @@ export const GET = async (request, { params }) => {
 
     try {
         const myBookings = await bookingsCollection.find({ email: params.email }).toArray();
-        return Response.json({ myBookings })
+        return NextResponse.json({ myBookings })
 
 
 
 
     } catch (error) {
-        console.log(error);
-
+        return NextResponse({ message: "data not Found" })
     }
 };

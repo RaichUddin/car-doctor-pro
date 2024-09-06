@@ -1,4 +1,5 @@
 import { connectDb } from "@/lib/connectDb";
+import { NextResponse } from "next/server";
 
 
 
@@ -8,13 +9,13 @@ export const GET = async () => {
 
     try {
         const services = await servicesCollection.find().toArray();
-        return Response.json({ services })
+        return NextResponse.json({ services });
 
 
 
 
     } catch (error) {
-        console.log(error);
+        return NextResponse.json({ message: "No Data Found", error });
 
     }
 };

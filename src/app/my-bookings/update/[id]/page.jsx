@@ -1,7 +1,7 @@
 "use client"
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -10,12 +10,11 @@ const Page = ({ params }) => {
 
     const [booking, setBooking] = useState([]);
 
-    const loadBooking = async () => {
+    const loadBooking = useCallback(async () => {
         try {
-            const res = await fetch(`http://localhost:3000/my-bookings/api/delete-booking/${params.id}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/my-bookings/api/delete-booking/${params.id}`);
             if (res.ok) {
                 const data = await res.json();
-
                 setBooking(data.response);
             } else {
                 toast.error('Failed to load booking.');
@@ -23,7 +22,7 @@ const Page = ({ params }) => {
         } catch (error) {
             toast.error('An error occurred while loading booking.');
         }
-    };
+    }, [params.id]);
 
     const handleUpdate = async (event) => {
         event.preventDefault();
@@ -34,7 +33,7 @@ const Page = ({ params }) => {
         }
 
         try {
-            const resp = await fetch(`http://localhost:3000/my-bookings/api/delete-booking/${params.id}`, {
+            const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/my-bookings/api/delete-booking/${params.id}`, {
                 method: "PATCH",
                 body: JSON.stringify(bookingUpdate),
                 headers: {
@@ -56,7 +55,7 @@ const Page = ({ params }) => {
         if (params?.id) {
             loadBooking()
         }
-    }, [params]);
+    }, [params.id, loadBooking]);
 
 
 

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Homepge from "@/components/Homepage/Homepge";
 
 

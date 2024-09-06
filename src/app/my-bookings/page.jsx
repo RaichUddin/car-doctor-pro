@@ -2,26 +2,30 @@
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+// import { NextResponse } from 'next/server';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const Page = () => {
     const [books, setBooks] = useState([]);
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         if (!session?.user?.email) return;
         try {
-            const resp = await fetch(`http://localhost:3000/my-bookings/api/${session.user.email}`);
-            const data = await resp.json()
-            setBooks(data?.myBookings || []);
+            const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/my-bookings/api/${session.user.email}`);
+            if (resp.ok) {
+                const data = await resp.json();
+                setBooks(data?.myBookings || []);
+            } else {
+                console.error("Failed to load bookings.");
+            }
         } catch (error) {
-            console.error("Failed to load bookings:", error);
+            console.error("An error occurred while fetching bookings:", error);
         }
+    }, [session?.user?.email]);
 
-
-    };
     const handleDelete = async (id) => {
-        const deleted = await fetch(`http://localhost:3000/my-bookings/api/delete-booking/${id}`, {
+        const deleted = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/my-bookings/api/delete-booking/${id}`, {
             method: "DELETE",
         });
         const resp = await deleted.json();
@@ -30,8 +34,10 @@ const Page = () => {
         }
     };
     useEffect(() => {
-        loadData()
-    }, [session]);
+        if (status === 'authenticated') {
+            loadData();
+        }
+    }, [status, loadData]);
     return (
         <div className='container mx-auto'>
             <div className='relative h-72'>
