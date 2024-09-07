@@ -22,7 +22,7 @@ const Page = () => {
         const resp = await signIn("credentials", {
             email,
             password,
-            redirect: false, // Use redirect: false to handle manually
+            redirect: true // Use redirect: false to handle manually
         });
 
         if (resp?.ok) {
